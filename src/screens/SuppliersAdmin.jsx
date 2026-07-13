@@ -146,13 +146,13 @@ export default function SuppliersAdmin() {
 
       <Feedback feedback={feedback} />
 
-      <div className="mb-4 flex flex-wrap items-center gap-3">
+      <div className="mb-4 grid grid-cols-1 gap-3 sm:flex sm:flex-wrap sm:items-center">
         <input
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="חיפוש ספק…"
-          className={`${inputCls} max-w-xs`}
+          className={`${inputCls} w-full sm:max-w-xs`}
         />
         <label className="flex items-center gap-2 text-sm text-slate-600">
           <input
@@ -186,7 +186,7 @@ export default function SuppliersAdmin() {
               </div>
             </div>
             {canEdit && (
-              <div className="flex shrink-0 items-center gap-2">
+              <div className="flex shrink-0 flex-wrap items-center justify-start gap-2 sm:justify-end">
                 <button
                   onClick={() => toggleActive(r)}
                   className="text-xs text-slate-500 hover:text-teal-600"
@@ -282,12 +282,12 @@ export default function SuppliersAdmin() {
 // ── Shared admin layout bits (used by the other admin screens too) ──
 export function AdminHeader({ title, subtitle, onAdd, addLabel }) {
   return (
-    <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+    <div className="mb-5 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h1 className="text-xl font-bold text-slate-900">{title}</h1>
+        <h1 className="text-xl font-bold text-slate-900 sm:text-2xl">{title}</h1>
         {subtitle && <p className="mt-1 text-sm text-slate-500">{subtitle}</p>}
       </div>
-      {onAdd && <Btn onClick={onAdd}>{addLabel}</Btn>}
+      {onAdd && <Btn onClick={onAdd} className="w-full sm:w-auto">{addLabel}</Btn>}
     </div>
   )
 }
@@ -308,7 +308,7 @@ export function ListShell({ loading, empty, children }) {
     )
   }
   return (
-    <div className="divide-y divide-slate-100 rounded-xl border border-slate-200 bg-white">
+    <div className="divide-y divide-slate-100 overflow-hidden rounded-xl border border-slate-200 bg-white">
       {children}
     </div>
   )
@@ -316,7 +316,7 @@ export function ListShell({ loading, empty, children }) {
 
 export function RowShell({ children }) {
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
+    <div className="flex flex-col items-stretch gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
       {children}
     </div>
   )

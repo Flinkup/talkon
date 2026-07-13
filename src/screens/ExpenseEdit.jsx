@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../auth/AuthProvider'
@@ -280,7 +280,7 @@ export default function ExpenseEdit() {
             עדכן את הפרטים ושמור את השינויים.
           </p>
         </div>
-        <Link to={returnTo} className="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium text-ink-700 transition hover:bg-slate-50">
+        <Link to={returnTo} className="inline-flex w-full items-center justify-center rounded-full border border-slate-300 px-4 py-2 text-sm font-medium text-ink-700 transition hover:bg-slate-50 sm:w-auto">
           חזרה לרשימה
         </Link>
       </div>
@@ -390,12 +390,12 @@ export default function ExpenseEdit() {
           <textarea rows={3} value={form.notes} onChange={(e) => setField('notes', e.target.value)} className={`${inputCls()} resize-y`} />
         </Field>
 
-        <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
+        <div className="grid grid-cols-1 gap-3 pt-2 sm:flex sm:flex-wrap sm:items-center sm:justify-between">
           <div className="flex flex-wrap items-center gap-3">
-            <button type="submit" disabled={submitting || deleting} className="rounded-full bg-gold-500 px-5 py-2.5 font-semibold text-ink-800 shadow-sm transition hover:bg-gold-600 disabled:opacity-60">
+            <button type="submit" disabled={submitting || deleting} className="w-full rounded-full bg-gold-500 px-5 py-2.5 font-semibold text-ink-800 shadow-sm transition hover:bg-gold-600 disabled:opacity-60 sm:w-auto">
               {submitting ? 'שומר...' : 'שמירת שינויים'}
             </button>
-            <button type="button" onClick={() => navigate(returnTo)} disabled={deleting} className="rounded-full border border-slate-300 px-5 py-2.5 font-medium text-ink-700 transition hover:bg-slate-50 disabled:opacity-60">
+            <button type="button" onClick={() => navigate(returnTo)} disabled={deleting} className="w-full rounded-full border border-slate-300 px-5 py-2.5 font-medium text-ink-700 transition hover:bg-slate-50 disabled:opacity-60 sm:w-auto">
               ביטול
             </button>
           </div>
@@ -405,7 +405,7 @@ export default function ExpenseEdit() {
               type="button"
               onClick={handleDelete}
               disabled={submitting || deleting}
-              className="rounded-full border border-red-200 px-5 py-2.5 font-medium text-red-600 transition hover:bg-red-50 disabled:opacity-60"
+              className="w-full rounded-full border border-red-200 px-5 py-2.5 font-medium text-red-600 transition hover:bg-red-50 disabled:opacity-60 sm:w-auto"
             >
               {deleting ? 'מוחק...' : 'מחיקת הוצאה'}
             </button>

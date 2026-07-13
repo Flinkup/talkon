@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../auth/AuthProvider'
@@ -314,26 +314,26 @@ export default function ExpenseList() {
 
   return (
     <div>
-      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+      <div className="mb-5 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-ink-800">רשימת הוצאות</h1>
+          <h1 className="text-xl font-bold text-ink-800 sm:text-2xl">רשימת הוצאות</h1>
           <p className="mt-1 text-sm text-slate-500">
             {loading
               ? 'טוען…'
               : `${filtered.length.toLocaleString('he-IL')} מתוך ${rows.length.toLocaleString('he-IL')} הוצאות`}
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="grid grid-cols-1 gap-2 sm:flex sm:items-center">
           <Link
             to="/expenses/new"
-            className="rounded-full bg-gold-500 px-4 py-2 text-sm font-semibold text-ink-800 shadow-sm transition hover:bg-gold-600"
+            className="inline-flex w-full items-center justify-center rounded-full bg-gold-500 px-4 py-2.5 text-sm font-semibold text-ink-800 shadow-sm transition hover:bg-gold-600 sm:w-auto sm:py-2"
           >
             + הוצאה חדשה
           </Link>
           <button
             onClick={handleExport}
             disabled={loading || filtered.length === 0}
-            className="rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-ink-700 transition hover:bg-slate-50 disabled:opacity-50"
+            className="inline-flex w-full items-center justify-center rounded-full border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-ink-700 transition hover:bg-slate-50 disabled:opacity-50 sm:w-auto sm:py-2"
           >
             ייצוא CSV
           </button>
@@ -359,7 +359,7 @@ export default function ExpenseList() {
       )}
 
       {/* Filters */}
-      <div className="mb-4 grid grid-cols-1 gap-3 rounded-xl border border-slate-200 bg-white p-4 sm:grid-cols-2 lg:grid-cols-6">
+      <div className="mb-4 grid grid-cols-1 gap-3 rounded-xl border border-slate-200 bg-white p-3 sm:grid-cols-2 sm:p-4 lg:grid-cols-6">
         <input
           type="text"
           value={search}
@@ -438,7 +438,7 @@ export default function ExpenseList() {
         {hasFilters && (
           <button
             onClick={clearFilters}
-            className="justify-self-start text-sm text-slate-500 hover:text-teal-600 lg:col-span-6"
+            className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-600 hover:border-teal-200 hover:text-teal-700 sm:w-auto lg:col-span-6"
           >
             נקה בחירות
           </button>
@@ -447,7 +447,7 @@ export default function ExpenseList() {
 
       {selectedCount > 0 && (
         <div className="mb-4 rounded-2xl border border-teal-100 bg-teal-50 p-4 shadow-sm">
-          <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <div className="text-sm font-semibold text-ink-800">
                 נבחרו {selectedCount.toLocaleString('he-IL')} רשומות
@@ -511,7 +511,7 @@ export default function ExpenseList() {
               type="button"
               onClick={handleBulkUpdate}
               disabled={bulkSaving || !hasBulkChange}
-              className="rounded-full bg-gold-500 px-4 py-2 text-sm font-semibold text-ink-800 shadow-sm transition hover:bg-gold-600 disabled:opacity-50"
+              className="w-full rounded-full bg-gold-500 px-4 py-2.5 text-sm font-semibold text-ink-800 shadow-sm transition hover:bg-gold-600 disabled:opacity-50 lg:w-auto lg:py-2"
             >
               {bulkSaving ? 'מעדכן...' : 'עדכון נבחרים'}
             </button>
@@ -520,7 +520,7 @@ export default function ExpenseList() {
       )}
 
       {/* Totals */}
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-hairline bg-surface px-5 py-4 shadow-sm">
+      <div className="mb-4 flex flex-col gap-3 rounded-2xl border border-hairline bg-surface px-4 py-4 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:px-5">
         <div className="flex items-center gap-3">
           <span className="h-9 w-1.5 rounded-full bg-gold-500" />
           <div>
@@ -672,7 +672,7 @@ export default function ExpenseList() {
 
       {/* Pagination */}
       {!loading && filtered.length > PAGE_SIZE && (
-        <div className="mt-4 flex items-center justify-center gap-4 text-sm">
+        <div className="mt-4 flex items-center justify-between gap-3 text-sm sm:justify-center sm:gap-4">
           <button
             onClick={() => setPage((p) => Math.max(0, p - 1))}
             disabled={page === 0}
@@ -712,7 +712,7 @@ function ExpenseCard({
   ].filter((item) => item.label)
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-4">
+    <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-sm">
       <div className="flex items-start justify-between gap-3">
         <input
           type="checkbox"
@@ -763,7 +763,7 @@ function ExpenseCard({
           ))}
         </div>
       )}
-      <div className="mt-2.5 flex items-center justify-between gap-3">
+      <div className="mt-3 flex items-center justify-between gap-3 border-t border-slate-100 pt-3">
         <PaymentStatusBadge status={r.payment_status} />
         <Link
           to={`/expenses/${r.id}/edit`} state={{ returnTo: '/expenses' }}

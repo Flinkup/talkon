@@ -1,4 +1,4 @@
-﻿import { useState } from 'react'
+import { useState } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { useAuth } from '../auth/AuthProvider'
 import Logo from './Logo'
@@ -24,13 +24,13 @@ export default function Layout() {
     <div className="min-h-screen bg-canvas">
       {/* ---- Top navigation (talkon.health style) ---- */}
       <header className="sticky top-0 z-30 border-b border-hairline bg-white/85 backdrop-blur">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
+        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-2 px-3 sm:h-16 sm:px-6">
           {/* Start (RTL right): logo + inline nav */}
-          <div className="flex items-center gap-6">
+          <div className="min-w-0 flex items-center gap-3 sm:gap-6">
             <NavLink
               to="/dashboard"
               className={({ isActive }) =>
-                `shrink-0 rounded-full px-2 py-1.5 transition ${
+                `shrink-0 rounded-full px-1.5 py-1 transition sm:px-2 sm:py-1.5 ${
                   isActive ? 'bg-teal-50 ring-1 ring-teal-100' : 'hover:bg-slate-100'
                 }`
               }
@@ -83,7 +83,7 @@ export default function Layout() {
 
         {/* ---- Mobile menu ---- */}
         {menuOpen && (
-          <nav className="animate-fade-in border-t border-hairline bg-white px-3 py-2 md:hidden">
+          <nav className="animate-fade-in border-t border-hairline bg-white px-3 py-2 shadow-sm md:hidden">
             {NAV.map((item) => (
               <NavLink
                 key={item.to}
@@ -113,7 +113,7 @@ export default function Layout() {
       <main>
         <div
           key={location.pathname}
-          className="animate-fade-in mx-auto max-w-6xl px-4 py-8 sm:px-6"
+          className="animate-fade-in mx-auto max-w-6xl px-3 py-5 sm:px-6 sm:py-8"
         >
           <Outlet />
         </div>

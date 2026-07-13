@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { PAYMENT_STATUS_LABELS } from '../lib/constants'
@@ -224,10 +224,10 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6">
-      <section className="flex flex-wrap items-start justify-between gap-4">
+      <section className="flex flex-col items-stretch gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="text-sm font-medium text-teal-700">{month.label}</p>
-          <h1 className="mt-1 text-3xl font-bold text-ink-800">הוצאות החודש עד כה</h1>
+          <h1 className="mt-1 text-2xl font-bold text-ink-800 sm:text-3xl">הוצאות החודש עד כה</h1>
           <p className="mt-2 max-w-2xl text-sm text-slate-500">
             תמונת מצב מהירה של ההוצאות שנרשמו מתחילת החודש ועד היום.
           </p>
@@ -235,7 +235,7 @@ export default function Dashboard() {
 
         <Link
           to="/expenses/new"
-          className="rounded-full bg-gold-500 px-5 py-3 text-sm font-semibold text-ink-800 shadow-sm transition hover:bg-gold-600"
+          className="inline-flex w-full items-center justify-center rounded-full bg-gold-500 px-5 py-3 text-sm font-semibold text-ink-800 shadow-sm transition hover:bg-gold-600 sm:w-auto"
         >
           + הזנת הוצאה חדשה
         </Link>
@@ -253,26 +253,26 @@ export default function Dashboard() {
         <StatCard label="פער מול ששולם חודש שעבר" value={gapLoading ? 'טוען...' : formatSignedIls(monthPaidGap)} />
       </section>
 
-      <section className="rounded-2xl border border-hairline bg-surface p-5 shadow-sm">
-        <div className="mb-5 flex flex-wrap items-start justify-between gap-4">
+      <section className="rounded-2xl border border-hairline bg-surface p-4 shadow-sm sm:p-5">
+        <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <h2 className="text-lg font-semibold text-ink-800">מגמת הוצאות חודשית</h2>
             <p className="text-sm text-slate-500">השוואה חודשית בין {trendYear} ל-{trendYear - 1}</p>
           </div>
-          <div className="flex flex-wrap items-end gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:flex sm:flex-wrap sm:items-end">
             <label className="block">
               <span className="mb-1 block text-xs font-medium text-slate-500">שנה</span>
               <select
                 value={trendYear}
                 onChange={(e) => setTrendYear(Number(e.target.value))}
-                className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-teal-500"
+                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-teal-500"
               >
                 {yearOptions.map((year) => (
                   <option key={year} value={year}>{year}</option>
                 ))}
               </select>
             </label>
-            <label className="block min-w-[12rem]">
+            <label className="block min-w-0 sm:min-w-[12rem]">
               <span className="mb-1 block text-xs font-medium text-slate-500">קטגוריה</span>
               <select
                 value={trendCategory}
@@ -303,7 +303,7 @@ export default function Dashboard() {
               <Legend color="bg-gold-500" label={`${trendYear - 1}: ${ilsFmt.format(trend.totalPrevious)}`} />
             </div>
             <div className="overflow-x-auto pb-2">
-              <div dir="ltr" className="grid min-w-[760px] grid-cols-12 items-end gap-3 border-b border-slate-200 pb-3">
+              <div dir="ltr" className="grid min-w-[620px] grid-cols-12 items-end gap-2 border-b border-slate-200 pb-3 sm:min-w-[760px] sm:gap-3">
                 {monthLabels.map((label, index) => (
                   <MonthBar
                     key={label}
@@ -321,7 +321,7 @@ export default function Dashboard() {
 
       <section className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <div className="rounded-2xl border border-hairline bg-surface p-5 shadow-sm lg:col-span-2">
-          <div className="mb-4 flex items-center justify-between gap-3">
+          <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h2 className="text-lg font-semibold text-ink-800">הוצאות אחרונות</h2>
               <p className="text-sm text-slate-500">הרישומים האחרונים מהחודש הנוכחי</p>
@@ -338,7 +338,7 @@ export default function Dashboard() {
           ) : (
             <div className="divide-y divide-slate-100">
               {recentRows.map((row) => (
-                <div key={row.id} className="flex items-center justify-between gap-4 py-3">
+                <div key={row.id} className="flex items-start justify-between gap-3 py-3">
                   <div className="min-w-0">
                     <div className="truncate font-medium text-ink-800">{row.item || 'ללא תיאור'}</div>
                     <div className="mt-0.5 text-xs text-slate-500">
@@ -365,7 +365,7 @@ export default function Dashboard() {
           )}
         </div>
 
-        <div className="rounded-2xl border border-hairline bg-surface p-5 shadow-sm">
+        <div className="rounded-2xl border border-hairline bg-surface p-4 shadow-sm sm:p-5">
           <h2 className="text-lg font-semibold text-ink-800">נקודת מבט ניהולית</h2>
           <div className="mt-4 space-y-4">
             <Insight label="שולם או הוחזר" value={loading ? 'טוען...' : ilsFmt.format(stats.paid)} />
@@ -384,12 +384,12 @@ export default function Dashboard() {
 function StatCard({ label, value, accent, tone }) {
   const accentClass = accent === 'gold' ? 'bg-gold-500' : tone === 'warning' ? 'bg-amber-400' : 'bg-teal-500'
   return (
-    <div className="rounded-2xl border border-hairline bg-surface p-5 shadow-sm">
+    <div className="rounded-2xl border border-hairline bg-surface p-4 shadow-sm sm:p-5">
       <div className="flex items-start gap-3">
         <span className={`mt-1 h-10 w-1.5 rounded-full ${accentClass}`} />
         <div>
           <div className="text-sm text-slate-500">{label}</div>
-          <div className="mt-1 text-2xl font-bold text-ink-800">{value}</div>
+          <div className="mt-1 text-xl font-bold text-ink-800 sm:text-2xl">{value}</div>
         </div>
       </div>
     </div>

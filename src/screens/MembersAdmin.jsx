@@ -182,13 +182,13 @@ do update set role = '${addRole}', is_active = true;`
                 )}
               </div>
 
-              <div className="flex shrink-0 items-center gap-2">
+              <div className="flex shrink-0 flex-wrap items-center justify-start gap-2 sm:justify-end">
                 {isAdmin ? (
                   <select
                     value={m.role}
                     disabled={busyId === m.user_id}
                     onChange={(e) => changeRole(m, e.target.value)}
-                    className={`${selectCls} w-auto py-1 text-sm`}
+                    className={`${selectCls} w-full py-1 text-sm sm:w-auto`}
                   >
                     {ROLES.map((r) => (
                       <option key={r} value={r}>

@@ -177,7 +177,7 @@ export default function CategoriesAdmin() {
               </div>
             </div>
             {canEdit && (
-              <div className="flex shrink-0 items-center gap-2">
+              <div className="flex shrink-0 flex-wrap items-center justify-start gap-2 sm:justify-end">
                 <button
                   onClick={() => toggleActive(r)}
                   className="text-xs text-slate-500 hover:text-teal-600"

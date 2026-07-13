@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../auth/AuthProvider'
 import {
@@ -560,11 +560,11 @@ export default function ExpenseNew() {
           />
         </Field>
 
-        <div className="flex items-center gap-3 pt-2">
+        <div className="grid grid-cols-1 gap-3 pt-2 sm:flex sm:items-center">
           <button
             type="submit"
             disabled={submitting}
-            className="rounded-full bg-gold-500 px-5 py-2.5 font-semibold text-ink-800 shadow-sm transition hover:bg-gold-600 disabled:opacity-60"
+            className="w-full rounded-full bg-gold-500 px-5 py-2.5 font-semibold text-ink-800 shadow-sm transition hover:bg-gold-600 disabled:opacity-60 sm:w-auto"
           >
             {submitting ? 'שומר...' : 'שמירת הוצאה'}
           </button>
@@ -578,7 +578,7 @@ export default function ExpenseNew() {
               setErrors({})
               setFeedback(null)
             }}
-            className="rounded-full border border-slate-300 px-5 py-2.5 font-medium text-ink-700 transition hover:bg-slate-50"
+            className="w-full rounded-full border border-slate-300 px-5 py-2.5 font-medium text-ink-700 transition hover:bg-slate-50 sm:w-auto"
           >
             ניקוי טופס
           </button>
