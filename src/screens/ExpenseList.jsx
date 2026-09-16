@@ -7,6 +7,7 @@ import {
   CURRENCY_SYMBOLS,
 } from '../lib/constants'
 import { toCsv, downloadCsv } from '../lib/csv'
+import { getVatAmount } from '../lib/vat'
 
 const PAGE_SIZE = 50
 
@@ -94,6 +95,7 @@ export default function ExpenseList() {
   const [supplier, setSupplier] = useState('')
   const [paymentMethod, setPaymentMethod] = useState('')
   const [recordStatus, setRecordStatus] = useState('')
+  const [vatOnly, setVatOnly] = useState(false)
   const [fromDate, setFromDate] = useState('')
   const [toDate, setToDate] = useState('')
   const [page, setPage] = useState(0)
@@ -177,19 +179,27 @@ export default function ExpenseList() {
       if (supplier && r.supplier !== supplier) return false
       if (paymentMethod && r.payment_method !== paymentMethod) return false
       if (recordStatus && r.payment_status !== recordStatus) return false
+      if (vatOnly && !r.vat_included) return false
       if (from && r.expense_date < from) return false
       if (to && r.expense_date > to) return false
       return true
     })
-  }, [rows, search, category, supplier, paymentMethod, recordStatus, normalizedDateRange])
+  }, [rows, search, category, supplier, paymentMethod, recordStatus, vatOnly, normalizedDateRange])
 
   // Reset to first page whenever a filter changes the result set size.
   useEffect(() => {
     setPage(0)
-  }, [search, category, supplier, paymentMethod, recordStatus, fromDate, toDate])
+  }, [search, category, supplier, paymentMethod, recordStatus, vatOnly, fromDate, toDate])
 
   const totalIls = useMemo(
     () => filtered.reduce((sum, r) => sum + (Number(r.amount_ils) || 0), 0),
+    [filtered],
+  )
+  const totalVat = useMemo(
+    () => filtered.reduce(
+      (sum, r) => sum + getVatAmount(r.amount_ils, r.expense_date, r.vat_included),
+      0,
+    ),
     [filtered],
   )
   const missingAmount = useMemo(
@@ -305,12 +315,13 @@ export default function ExpenseList() {
     setSupplier('')
     setPaymentMethod('')
     setRecordStatus('')
+    setVatOnly(false)
     setFromDate('')
     setToDate('')
     setSelectedIds(new Set())
   }
 
-  const hasFilters = search || category || supplier || paymentMethod || recordStatus || fromDate || toDate
+  const hasFilters = search || category || supplier || paymentMethod || recordStatus || vatOnly || fromDate || toDate
 
   return (
     <div>
@@ -415,6 +426,15 @@ export default function ExpenseList() {
             </option>
           ))}
         </select>
+        <label className="flex min-h-10 cursor-pointer select-none items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 transition hover:border-teal-300">
+          <input
+            type="checkbox"
+            checked={vatOnly}
+            onChange={(e) => setVatOnly(e.target.checked)}
+            className="h-4 w-4 rounded border-slate-300 text-teal-600"
+          />
+          חשבוניות עם מע״מ בלבד
+        </label>
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:col-span-2">
           <label className="block">
             <span className="mb-1 block text-xs font-medium text-slate-500">מתאריך</span>
@@ -520,20 +540,36 @@ export default function ExpenseList() {
       )}
 
       {/* Totals */}
-      <div className="mb-4 flex flex-col gap-3 rounded-2xl border border-hairline bg-surface px-4 py-4 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:px-5">
-        <div className="flex items-center gap-3">
-          <span className="h-9 w-1.5 rounded-full bg-gold-500" />
-          <div>
-            <div className="text-xs font-medium text-slate-500">
-              סכום כולל (בשקלים)
+      <div className="mb-4 rounded-2xl border border-hairline bg-surface px-4 py-4 shadow-sm sm:px-5">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-8">
+          <div className="flex items-center gap-3 sm:min-w-[13rem]">
+            <span className="h-9 w-1.5 rounded-full bg-gold-500" />
+            <div>
+              <div className="text-xs font-medium text-slate-500">
+                סכום כולל (בשקלים)
+              </div>
+              <div className="text-xl font-bold text-ink-800">
+                ₪{ilsFmt.format(totalIls)}
+              </div>
             </div>
-            <div className="text-xl font-bold text-ink-800">
-              ₪{ilsFmt.format(totalIls)}
+          </div>
+          <div className="flex items-center gap-3 border-t border-slate-100 pt-4 sm:border-r sm:border-t-0 sm:pr-8 sm:pt-0">
+            <span className="h-9 w-1.5 rounded-full bg-teal-500" />
+            <div>
+              <div className="text-xs font-medium text-slate-500">
+                סכום מע״מ כולל
+              </div>
+              <div className="text-xl font-bold text-ink-800">
+                ₪{ilsFmt.format(totalVat)}
+              </div>
+              <div className="mt-0.5 text-[11px] text-slate-400">
+                מתוך חשבוניות שסומנו ככוללות מע״מ
+              </div>
             </div>
           </div>
         </div>
         {missingAmount > 0 && (
-          <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-medium text-amber-700">
+          <span className="mt-3 inline-flex rounded-full bg-amber-50 px-3 py-1 text-xs font-medium text-amber-700">
             {missingAmount} שורות ללא סכום — לא נכללות בסכום
           </span>
         )}
