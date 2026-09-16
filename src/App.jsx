@@ -2,6 +2,7 @@
 import ProtectedRoute from './auth/ProtectedRoute'
 import Layout from './components/Layout'
 import Login from './screens/Login'
+import ResetPassword from './screens/ResetPassword'
 import Dashboard from './screens/Dashboard'
 import ExpenseNew from './screens/ExpenseNew'
 import ExpenseEdit from './screens/ExpenseEdit'
@@ -15,6 +16,7 @@ export default function App() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
 
       <Route
         element={

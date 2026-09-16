@@ -15,7 +15,7 @@ export default function Login() {
   const [password, setPassword] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
-  const [info, setInfo] = useState('')
+  const [info, setInfo] = useState(location.state?.info || '')
 
   const from = location.state?.from?.pathname || '/expenses/new'
 
@@ -56,6 +56,30 @@ export default function Login() {
     } finally {
       setSubmitting(false)
     }
+  }
+
+  async function handleResetPassword() {
+    setError('')
+    setInfo('')
+
+    const normalizedEmail = email.trim()
+    if (!normalizedEmail) {
+      setError('יש להזין כתובת אימייל כדי לאפס את הסיסמה.')
+      return
+    }
+
+    setSubmitting(true)
+    const { error: resetError } = await supabase.auth.resetPasswordForEmail(
+      normalizedEmail,
+      { redirectTo: `${window.location.origin}/reset-password` },
+    )
+
+    if (resetError) {
+      setError(translateAuthError(resetError.message))
+    } else {
+      setInfo('נשלח אליך קישור לקביעת סיסמה חדשה.')
+    }
+    setSubmitting(false)
   }
 
   return (
@@ -137,6 +161,17 @@ export default function Login() {
                 ? 'התחברות'
                 : 'הרשמה'}
           </Btn>
+
+          {mode === 'signin' && (
+            <button
+              type="button"
+              onClick={handleResetPassword}
+              disabled={submitting}
+              className="w-full text-sm text-teal-600 transition hover:text-teal-700 disabled:opacity-50"
+            >
+              שכחתי סיסמה
+            </button>
+          )}
 
           <button
             type="button"
