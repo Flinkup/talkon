@@ -8,6 +8,10 @@ import {
 } from '../lib/constants'
 import { toCsv, downloadCsv } from '../lib/csv'
 import { getVatAmount } from '../lib/vat'
+import {
+  readExpenseDateRange,
+  writeExpenseDateRange,
+} from '../lib/expenseListSession'
 
 const PAGE_SIZE = 50
 
@@ -96,9 +100,14 @@ export default function ExpenseList() {
   const [paymentMethod, setPaymentMethod] = useState('')
   const [recordStatus, setRecordStatus] = useState('')
   const [vatOnly, setVatOnly] = useState(false)
-  const [fromDate, setFromDate] = useState('')
-  const [toDate, setToDate] = useState('')
+  const [dateRange, setDateRange] = useState(() => readExpenseDateRange())
+  const fromDate = dateRange.from
+  const toDate = dateRange.to
   const [page, setPage] = useState(0)
+
+  useEffect(() => {
+    writeExpenseDateRange(dateRange)
+  }, [dateRange])
 
   useEffect(() => {
     let active = true
@@ -166,7 +175,7 @@ export default function ExpenseList() {
       : { from: toDate, to: fromDate }
   }, [fromDate, toDate])
 
-  const filtered = useMemo(() => {
+  const matchingRows = useMemo(() => {
     const q = search.trim().toLowerCase()
     const from = normalizedDateRange.from
     const to = normalizedDateRange.to
@@ -179,12 +188,16 @@ export default function ExpenseList() {
       if (supplier && r.supplier !== supplier) return false
       if (paymentMethod && r.payment_method !== paymentMethod) return false
       if (recordStatus && r.payment_status !== recordStatus) return false
-      if (vatOnly && !r.vat_included) return false
       if (from && r.expense_date < from) return false
       if (to && r.expense_date > to) return false
       return true
     })
-  }, [rows, search, category, supplier, paymentMethod, recordStatus, vatOnly, normalizedDateRange])
+  }, [rows, search, category, supplier, paymentMethod, recordStatus, normalizedDateRange])
+
+  const filtered = useMemo(
+    () => vatOnly ? matchingRows.filter((r) => r.vat_included) : matchingRows,
+    [matchingRows, vatOnly],
+  )
 
   // Reset to first page whenever a filter changes the result set size.
   useEffect(() => {
@@ -192,19 +205,19 @@ export default function ExpenseList() {
   }, [search, category, supplier, paymentMethod, recordStatus, vatOnly, fromDate, toDate])
 
   const totalIls = useMemo(
-    () => filtered.reduce((sum, r) => sum + (Number(r.amount_ils) || 0), 0),
-    [filtered],
+    () => matchingRows.reduce((sum, r) => sum + (Number(r.amount_ils) || 0), 0),
+    [matchingRows],
   )
   const totalVat = useMemo(
-    () => filtered.reduce(
+    () => matchingRows.reduce(
       (sum, r) => sum + getVatAmount(r.amount_ils, r.expense_date, r.vat_included),
       0,
     ),
-    [filtered],
+    [matchingRows],
   )
   const missingAmount = useMemo(
-    () => filtered.filter((r) => r.amount_ils == null).length,
-    [filtered],
+    () => matchingRows.filter((r) => r.amount_ils == null).length,
+    [matchingRows],
   )
 
   const pageCount = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
@@ -316,8 +329,7 @@ export default function ExpenseList() {
     setPaymentMethod('')
     setRecordStatus('')
     setVatOnly(false)
-    setFromDate('')
-    setToDate('')
+    setDateRange({ from: '', to: '' })
     setSelectedIds(new Set())
   }
 
@@ -441,7 +453,10 @@ export default function ExpenseList() {
             <input
               type="date"
               value={fromDate}
-              onChange={(e) => setFromDate(e.target.value)}
+              onChange={(e) => setDateRange((current) => ({
+                ...current,
+                from: e.target.value,
+              }))}
               className="w-full rounded-lg border border-slate-300 px-2 py-2 text-sm outline-none focus:border-teal-500"
             />
           </label>
@@ -450,7 +465,10 @@ export default function ExpenseList() {
             <input
               type="date"
               value={toDate}
-              onChange={(e) => setToDate(e.target.value)}
+              onChange={(e) => setDateRange((current) => ({
+                ...current,
+                to: e.target.value,
+              }))}
               className="w-full rounded-lg border border-slate-300 px-2 py-2 text-sm outline-none focus:border-teal-500"
             />
           </label>
